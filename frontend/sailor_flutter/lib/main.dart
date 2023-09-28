@@ -186,18 +186,24 @@ class TodoCard extends StatelessWidget {
       cardColor = Theme.of(context).colorScheme.inversePrimary;
     }
 
+    var dragged = Offset.zero;
+
     return GestureDetector(
       onTap: () {
         appState.finishTask(task);
       },
-      onHorizontalDragEnd: (details) {
-        if (details.velocity.pixelsPerSecond.dx < 0) {
+      onPanUpdate: (details) {
+        dragged += details.delta;
+      },
+      onPanEnd: (details) {
+        if (dragged.dx < 0) {
           // slide left
           // edit task
         } else {
           // slide right
           appState.changeTaskImportance(task, !task.isImportant);
         }
+        dragged = Offset.zero;
       },
       child: Card(
         color: cardColor,
@@ -212,7 +218,7 @@ class TodoCard extends StatelessWidget {
           trailing: IconButton(
             icon: Icon(Icons.more_vert),
             onPressed: () {
-              //show details
+              // show menu
             },
           ),
         ),
