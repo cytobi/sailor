@@ -124,9 +124,34 @@ class TodoPage extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          appState.addTask(TodoTask(title: 'New Task'));
-        },
+        onPressed: () => showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Enter task title'),
+            content: const SizedBox(
+              width: 250,
+              child: TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Title',
+                ),
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'Cancel'),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  appState.addTask(TodoTask(title: 'test'));
+                  Navigator.pop(context, 'OK');
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        ),
         child: Icon(Icons.add),
       ),
     );
@@ -165,6 +190,15 @@ class TodoCard extends StatelessWidget {
       onTap: () {
         appState.finishTask(task);
       },
+      onHorizontalDragEnd: (details) {
+        if (details.velocity.pixelsPerSecond.dx < 0) {
+          // slide left
+          // edit task
+        } else {
+          // slide right
+          appState.changeTaskImportance(task, !task.isImportant);
+        }
+      },
       child: Card(
         color: cardColor,
         child: ListTile(
@@ -175,10 +209,10 @@ class TodoCard extends StatelessWidget {
               appState.finishTask(task);
             },
           ),
-          trailing: Switch(
-            value: task.isImportant,
-            onChanged: (value) {
-              appState.changeTaskImportance(task, value);
+          trailing: IconButton(
+            icon: Icon(Icons.more_vert),
+            onPressed: () {
+              //show details
             },
           ),
         ),
