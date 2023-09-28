@@ -11,7 +11,7 @@ class SailorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
+      create: (context) => SailorAppState(),
       child: MaterialApp(
         title: 'sailor',
         theme: ThemeData(
@@ -24,7 +24,14 @@ class SailorApp extends StatelessWidget {
   }
 }
 
-class MyAppState extends ChangeNotifier {}
+class SailorAppState extends ChangeNotifier {
+  var todos = <TodoTask>[];
+
+  void addTask(TodoTask task) {
+    todos.add(task);
+    notifyListeners();
+  }
+}
 
 class SailorMainPage extends StatefulWidget {
   @override
@@ -78,11 +85,11 @@ class _SailorMainPageState extends State<SailorMainPage> {
               ),
             ),
             NavigationDrawerDestination(
-              icon: Icon(Icons.home),
-              label: Text('Home'),
+              icon: Icon(Icons.check_circle_outline),
+              label: Text('To-Do'),
             ),
             NavigationDrawerDestination(
-              icon: Icon(Icons.favorite),
+              icon: Icon(Icons.more),
               label: Text('More'),
             ),
           ],
@@ -95,19 +102,54 @@ class _SailorMainPageState extends State<SailorMainPage> {
 class TodoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<SailorAppState>();
+    var todos = appState.todos;
+
     return Scaffold(
       body: ListView(
         children: [
-          ListTile(
-            title: Text('Todo 1'),
-          ),
-          ListTile(
-            title: Text('Todo 2'),
-          ),
-          ListTile(
-            title: Text('Todo 3'),
-          ),
+          for (var todo in todos) TodoCard(task: todo),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          appState.addTask(TodoTask(title: 'New Task'));
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+class TodoTask {
+  String title;
+  String description;
+  bool isDone;
+  bool isImportant;
+
+  TodoTask({
+    required this.title,
+    this.description = '',
+    this.isDone = false,
+    this.isImportant = false,
+  });
+}
+
+class TodoCard extends StatelessWidget {
+  final TodoTask task;
+
+  const TodoCard({required this.task});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(task.title),
+        subtitle: Text(task.description),
+        trailing: IconButton(
+          icon: Icon(Icons.check_circle_outline),
+          onPressed: () {},
+        ),
       ),
     );
   }
