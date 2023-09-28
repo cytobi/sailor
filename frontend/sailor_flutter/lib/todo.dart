@@ -101,15 +101,64 @@ class TodoCard extends StatelessWidget {
               appState.finishTask(task);
             },
           ),
-          trailing: IconButton(
-            icon: Icon(Icons.more_vert),
-            onPressed: () {
-              // show menu to edit or make important
-            },
-          ),
+          trailing: TaskMenu(task: task),
         ),
       ),
     );
+  }
+}
+
+class TaskMenu extends StatelessWidget {
+  final TodoTask task;
+
+  const TaskMenu({required this.task});
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<SailorAppState>();
+
+    var importanceText =
+        task.isImportant ? 'Unmark important' : 'Mark important';
+
+    return MenuAnchor(
+        menuChildren: [
+          MenuItemButton(
+            child: Text('Complete'),
+            onPressed: () {
+              appState.finishTask(task);
+            },
+          ),
+          MenuItemButton(
+            child: Text('Edit'),
+            onPressed: () {
+              // edit task
+            },
+          ),
+          MenuItemButton(
+            child: Text(importanceText),
+            onPressed: () {
+              appState.changeTaskImportance(task, !task.isImportant);
+            },
+          ),
+          MenuItemButton(
+            child: Text('Delete'),
+            onPressed: () {
+              appState.deleteTask(task);
+            },
+          ),
+        ],
+        builder: (context, controller, child) {
+          return IconButton(
+            icon: Icon(Icons.more_vert),
+            onPressed: () {
+              if (controller.isOpen) {
+                controller.close();
+              } else {
+                controller.open();
+              }
+            },
+          );
+        });
   }
 }
 

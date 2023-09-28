@@ -42,6 +42,11 @@ class SailorAppState extends ChangeNotifier {
     task.isImportant = isImportant;
     notifyListeners();
   }
+
+  void deleteTask(TodoTask task) {
+    todos.remove(task);
+    notifyListeners();
+  }
 }
 
 class SailorMainPage extends StatefulWidget {
