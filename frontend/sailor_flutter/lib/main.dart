@@ -117,6 +117,8 @@ class TodoPage extends StatelessWidget {
 
     var uncompletedTodos = todos.where((todo) => !todo.isDone).toList();
 
+    var titleController = TextEditingController();
+
     return Scaffold(
       body: ListView(
         children: [
@@ -128,13 +130,18 @@ class TodoPage extends StatelessWidget {
           context: context,
           builder: (BuildContext context) => AlertDialog(
             title: const Text('Enter task title'),
-            content: const SizedBox(
+            content: SizedBox(
               width: 250,
               child: TextField(
+                controller: titleController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Title',
                 ),
+                onSubmitted: (value) {
+                  appState.addTask(TodoTask(title: value));
+                  Navigator.pop(context, 'OK');
+                },
               ),
             ),
             actions: <Widget>[
@@ -144,7 +151,7 @@ class TodoPage extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  appState.addTask(TodoTask(title: 'test'));
+                  appState.addTask(TodoTask(title: titleController.text));
                   Navigator.pop(context, 'OK');
                 },
                 child: const Text('OK'),
@@ -218,7 +225,7 @@ class TodoCard extends StatelessWidget {
           trailing: IconButton(
             icon: Icon(Icons.more_vert),
             onPressed: () {
-              // show menu
+              // show menu to edit or make important
             },
           ),
         ),
