@@ -31,6 +31,16 @@ class SailorAppState extends ChangeNotifier {
     todos.add(task);
     notifyListeners();
   }
+
+  void finishTask(TodoTask task) {
+    task.isDone = true;
+    notifyListeners();
+  }
+
+  void changeTaskImportance(TodoTask task, bool isImportant) {
+    task.isImportant = isImportant;
+    notifyListeners();
+  }
 }
 
 class SailorMainPage extends StatefulWidget {
@@ -105,10 +115,12 @@ class TodoPage extends StatelessWidget {
     var appState = context.watch<SailorAppState>();
     var todos = appState.todos;
 
+    var uncompletedTodos = todos.where((todo) => !todo.isDone).toList();
+
     return Scaffold(
       body: ListView(
         children: [
-          for (var todo in todos) TodoCard(task: todo),
+          for (var todo in uncompletedTodos) TodoCard(task: todo),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -142,13 +154,33 @@ class TodoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        title: Text(task.title),
-        subtitle: Text(task.description),
-        trailing: IconButton(
-          icon: Icon(Icons.check_circle_outline),
-          onPressed: () {},
+    var appState = context.watch<SailorAppState>();
+
+    var cardColor = Theme.of(context).colorScheme.surface;
+    if (task.isImportant) {
+      cardColor = Theme.of(context).colorScheme.inversePrimary;
+    }
+
+    return GestureDetector(
+      onTap: () {
+        appState.finishTask(task);
+      },
+      child: Card(
+        color: cardColor,
+        child: ListTile(
+          title: Text(task.title),
+          leading: Checkbox(
+            value: task.isDone,
+            onChanged: (value) {
+              appState.finishTask(task);
+            },
+          ),
+          trailing: Switch(
+            value: task.isImportant,
+            onChanged: (value) {
+              appState.changeTaskImportance(task, value);
+            },
+          ),
         ),
       ),
     );
