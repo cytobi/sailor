@@ -128,12 +128,12 @@ class TaskMenu extends StatelessWidget {
               appState.finishTask(task);
             },
           ),
-          MenuItemButton(
-            child: Text('Edit'),
+          /*MenuItemButton(
+            child: Text('Details'),
             onPressed: () {
-              // edit task
+              // show detail page
             },
-          ),
+          ),*/
           MenuItemButton(
             child: Text(importanceText),
             onPressed: () {
