@@ -68,6 +68,15 @@ class _SailorMainPageState extends State<SailorMainPage> {
             });
           },
           children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'sailor',
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              ),
+            ),
             NavigationDrawerDestination(
               icon: Icon(Icons.home),
               label: Text('Home'),
